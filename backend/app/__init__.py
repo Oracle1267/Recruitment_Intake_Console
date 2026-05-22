@@ -1,0 +1,2 @@
+"""RushIntel backend application package."""
+

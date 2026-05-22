@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+rushintel.db
+*.db
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+npm-debug.log*
+
+# Local runtime output
+logs/
+
+# Environment
+.env
+.env.*
+!.env.example

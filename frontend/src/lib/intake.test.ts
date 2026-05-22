@@ -205,7 +205,6 @@ describe("intake helpers", () => {
         event_check_in: 1,
         csv_import: 0,
         manual_entry: 0,
-        public_source: 0,
       },
     });
 

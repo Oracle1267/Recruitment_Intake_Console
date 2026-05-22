@@ -1,6 +1,6 @@
 # Recruitment Intake Console
 
-Recruitment Intake Console is a Kappa Sigma-branded recruitment operations tool. The current product focus is no longer unknown-prospect discovery from public internet searches; it is intake, review, dedupe, promotion, and follow-up for legitimate chapter recruitment funnels.
+Recruitment Intake Console is a Kappa Sigma-branded recruitment operations tool for chapter-controlled intake, review, dedupe, promotion, and follow-up across legitimate recruitment funnels.
 
 This repository contains a split-stack MVP application for fraternity recruitment intake and prospect operations.
 
@@ -60,8 +60,6 @@ The Intake Console is the main surface. It supports single lead entry, pasted CS
 
 Expected CSV headers include `name` or `first_name`/`last_name`, plus optional `handle`, `email`, `phone`, `interests`, `notes`, `referred_by`, and `event_name`.
 
-The older public-source discovery code is still present in the backend for auditability and possible future deletion, but it is no longer the main product path and is not shown on the main dashboard.
-
 ## Handoff
 
 Target handoff repository:
@@ -72,4 +70,4 @@ Keep `.venv`, `node_modules`, local databases, generated caches, and local logs 
 
 ## MVP Boundaries
 
-The current app slice supports recruitment intake, CSV import, duplicate review, prospect promotion, follow-up tracking, and removal/N/A review. Platform scraping, browser-extension extraction, mass messaging, hidden/private content collection, deleted-content recovery, deceptive accounts, and high-risk OSINT tooling are out of scope.
+The current app slice supports recruitment intake, CSV import, duplicate review, prospect promotion, follow-up tracking, and removal/N/A review. Public-source discovery, OSINT collection, web scraping, browser-extension extraction, search-result imports, source-atlas tooling, mass messaging, hidden/private content collection, deleted-content recovery, and deceptive accounts are out of scope.

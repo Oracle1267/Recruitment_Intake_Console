@@ -16,10 +16,9 @@ export type SourceType =
   | "opt_in"
   | "event_check_in"
   | "csv_import"
-  | "manual_entry"
-  | "public_source";
+  | "manual_entry";
 
-export type CollectionMethod = "manual" | "assisted" | "public_scraping";
+export type CollectionMethod = "manual" | "assisted";
 
 export type Prospect = {
   id: string;
@@ -30,7 +29,7 @@ export type Prospect = {
   sourceUrl?: string | null;
   primaryHandle?: string | null;
   collectionMethod: CollectionMethod;
-  publicInformationConfirmed: boolean;
+  permissionConfirmed: boolean;
   status: RecruitmentStatus;
   rushScore: number;
   interests: string[];
@@ -50,7 +49,7 @@ export type ApiProspect = {
   primary_handle: string | null;
   source_url: string | null;
   collection_method: CollectionMethod;
-  public_information_confirmed: boolean;
+  permission_confirmed: boolean;
   status: RecruitmentStatus;
   rush_score: number;
   interests: string[];
@@ -137,7 +136,6 @@ export function getDashboardMetrics(
         event_check_in: 0,
         csv_import: 0,
         manual_entry: 0,
-        public_source: 0,
       } as Record<SourceType, number>,
     ),
   };
@@ -157,9 +155,6 @@ export function inferProspectSourceType(sourcePlatform: string): SourceType {
   if (normalized.includes("csv")) {
     return "csv_import";
   }
-  if (normalized.includes("public")) {
-    return "public_source";
-  }
   return "manual_entry";
 }
 
@@ -173,7 +168,7 @@ export function mapApiProspect(prospect: ApiProspect): Prospect {
     primaryHandle: prospect.primary_handle,
     sourceUrl: prospect.source_url,
     collectionMethod: prospect.collection_method,
-    publicInformationConfirmed: prospect.public_information_confirmed,
+    permissionConfirmed: prospect.permission_confirmed,
     status: prospect.status,
     rushScore: prospect.rush_score,
     interests: prospect.interests,

@@ -5,15 +5,10 @@ from datetime import date, datetime
 from pydantic import BaseModel, Field
 
 from app.models import (
-    CandidateStatus,
     CollectionMethod,
-    DiscoveryRunStatus,
-    DiscoverySourceType,
     IntakeLeadStatus,
     IntakeSourceType,
     RecruitmentStatus,
-    SourceAtlasCategory,
-    SourceAtlasStatus,
 )
 
 
@@ -28,7 +23,7 @@ class ProspectCreate(BaseModel):
     primary_handle: str | None = None
     source_url: str | None = None
     collection_method: CollectionMethod = CollectionMethod.manual
-    public_information_confirmed: bool
+    permission_confirmed: bool
     interests: list[str] = Field(default_factory=list)
     notes: str | None = None
     rush_score: int = Field(default=0, ge=0, le=100)
@@ -51,7 +46,7 @@ class ProspectRead(BaseModel):
     primary_handle: str | None
     source_url: str | None
     collection_method: CollectionMethod
-    public_information_confirmed: bool
+    permission_confirmed: bool
     suppressed: bool
     created_at: datetime
     updated_at: datetime
@@ -110,75 +105,6 @@ class SuppressionRead(BaseModel):
     created_at: datetime
 
     model_config = {"from_attributes": True}
-
-
-class DiscoverySourceCreate(BaseModel):
-    name: str = Field(min_length=1, max_length=160)
-    url: str = Field(min_length=1, max_length=500)
-    source_type: DiscoverySourceType
-    source_platform: str = Field(min_length=1, max_length=80)
-    public_access_confirmed: bool
-    robots_check_required: bool = True
-    notes: str | None = None
-
-
-class DiscoverySourceRead(BaseModel):
-    id: str
-    name: str
-    url: str
-    source_type: DiscoverySourceType
-    source_platform: str
-    public_access_confirmed: bool
-    robots_check_required: bool
-    notes: str | None
-    created_at: datetime
-    updated_at: datetime
-
-    model_config = {"from_attributes": True}
-
-
-class DiscoveryRunCreate(BaseModel):
-    source_id: str
-    html_override: str | None = Field(default=None, max_length=250_000)
-
-
-class DiscoveryRunRead(BaseModel):
-    id: str
-    source_id: str
-    status: DiscoveryRunStatus
-    robots_allowed: bool
-    http_status: int | None
-    candidates_found: int
-    error: str | None
-    started_at: datetime
-    completed_at: datetime | None
-
-    model_config = {"from_attributes": True}
-
-
-class CandidateLeadRead(BaseModel):
-    id: str
-    source_id: str
-    run_id: str
-    display_name: str | None
-    handle: str | None
-    source_platform: str
-    source_url: str
-    evidence: str
-    rationale: str
-    confidence_score: int
-    status: CandidateStatus
-    rejection_reason: str | None
-    promoted_prospect_id: str | None
-    created_at: datetime
-    updated_at: datetime
-
-    model_config = {"from_attributes": True}
-
-
-class CandidateReviewUpdate(BaseModel):
-    status: CandidateStatus
-    rejection_reason: str | None = None
 
 
 class RemovalCreate(BaseModel):
@@ -261,123 +187,3 @@ class IntakeMetricsRead(BaseModel):
     removed: int
     duplicate_groups: int
     source_mix: dict[IntakeSourceType, int]
-
-
-class SavedSearchQueryCreate(BaseModel):
-    label: str = Field(min_length=1, max_length=160)
-    query: str = Field(min_length=1, max_length=500)
-    source_type: DiscoverySourceType
-    source_platform: str = Field(min_length=1, max_length=80)
-    source_url: str = Field(min_length=1, max_length=500)
-    public_access_confirmed: bool
-    notes: str | None = None
-
-
-class SavedSearchQueryRead(BaseModel):
-    id: str
-    label: str
-    query: str
-    source_type: DiscoverySourceType
-    source_platform: str
-    source_url: str
-    public_access_confirmed: bool
-    notes: str | None
-    active: bool
-    created_at: datetime
-    updated_at: datetime
-
-    model_config = {"from_attributes": True}
-
-
-class PublicResultsImportCreate(BaseModel):
-    saved_search_query_id: str | None = None
-    source_atlas_entry_id: str | None = None
-    name: str = Field(min_length=1, max_length=160)
-    url: str = Field(min_length=1, max_length=500)
-    source_type: DiscoverySourceType
-    source_platform: str = Field(min_length=1, max_length=80)
-    public_access_confirmed: bool
-    pasted_results: str = Field(min_length=1, max_length=250_000)
-    notes: str | None = None
-
-
-class SourceImportBatchRead(BaseModel):
-    id: str
-    saved_search_query_id: str | None
-    source_id: str
-    run_id: str
-    import_method: str
-    public_access_confirmed: bool
-    pasted_results_excerpt: str
-    candidates_created: int
-    notes: str | None
-    created_at: datetime
-
-    model_config = {"from_attributes": True}
-
-
-class CandidateDuplicateGroup(BaseModel):
-    identity_key: str
-    label: str
-    count: int
-    statuses: list[CandidateStatus]
-    candidates: list[CandidateLeadRead]
-
-
-class DiscoveryCoverageRequest(BaseModel):
-    expected_male_pool: int = Field(default=430, ge=1, le=100_000)
-
-
-class DiscoveryCoverageRead(BaseModel):
-    total_candidates: int
-    unique_candidates: int
-    usable_leads: int
-    expected_male_pool: int
-    coverage_percent: float
-
-
-class SourceAtlasCreate(BaseModel):
-    name: str = Field(min_length=1, max_length=160)
-    url: str = Field(min_length=1, max_length=500)
-    category: SourceAtlasCategory
-    source_type: DiscoverySourceType
-    source_platform: str = Field(min_length=1, max_length=80)
-    public_access_confirmed: bool
-    priority: int = Field(default=3, ge=1, le=5)
-    review_cadence_days: int = Field(default=14, ge=1, le=365)
-    notes: str | None = None
-
-
-class SourceAtlasRead(BaseModel):
-    id: str
-    name: str
-    url: str
-    category: SourceAtlasCategory
-    source_type: DiscoverySourceType
-    source_platform: str
-    public_access_confirmed: bool
-    priority: int
-    review_cadence_days: int
-    notes: str | None
-    status: SourceAtlasStatus
-    created_at: datetime
-    updated_at: datetime
-
-    model_config = {"from_attributes": True}
-
-
-class SourceAtlasReportItem(BaseModel):
-    source: SourceAtlasRead
-    import_count: int
-    total_candidates: int
-    usable_leads: int
-    last_imported_at: datetime | None
-
-
-class SourceSetupResult(BaseModel):
-    atlas_sources_created: int
-    atlas_sources_skipped: int
-    saved_searches_created: int
-    saved_searches_skipped: int
-    created_source_names: list[str]
-    created_search_labels: list[str]

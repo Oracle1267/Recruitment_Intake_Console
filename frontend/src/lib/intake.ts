@@ -3,8 +3,7 @@ export type IntakeSourceType =
   | "opt_in"
   | "event_check_in"
   | "csv_import"
-  | "manual_entry"
-  | "public_source";
+  | "manual_entry";
 
 export type IntakeLeadStatus = "needs_review" | "promoted" | "rejected" | "removed";
 
@@ -119,7 +118,6 @@ export const intakeSourceOptions: Array<{ id: IntakeSourceType; label: string }>
   { id: "event_check_in", label: "Event check-in" },
   { id: "csv_import", label: "CSV import" },
   { id: "manual_entry", label: "Manual entry" },
-  { id: "public_source", label: "Public source" },
 ];
 
 export function mapApiIntakeLead(lead: ApiIntakeLead): IntakeLead {
@@ -360,17 +358,16 @@ export const demoIntakeDuplicateGroups: IntakeDuplicateGroup[] = [
 ];
 
 export const demoIntakeMetrics: IntakeMetrics = {
-  totalLeads: 3,
-  needsReview: 2,
-  promoted: 1,
+  totalLeads: 0,
+  needsReview: 0,
+  promoted: 0,
   removed: 0,
-  duplicateGroups: 1,
+  duplicateGroups: 0,
   sourceMix: {
-    member_referral: 1,
-    opt_in: 1,
-    event_check_in: 1,
+    member_referral: 0,
+    opt_in: 0,
+    event_check_in: 0,
     csv_import: 0,
     manual_entry: 0,
-    public_source: 0,
   },
 };

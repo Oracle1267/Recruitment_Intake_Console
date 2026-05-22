@@ -14,7 +14,7 @@ const prospects: Prospect[] = [
     preferredName: "Avery",
     sourcePlatform: "TikTok",
     collectionMethod: "manual",
-    publicInformationConfirmed: true,
+    permissionConfirmed: true,
     status: "identified",
     rushScore: 72,
     interests: ["orientation"],
@@ -30,7 +30,7 @@ const prospects: Prospect[] = [
     preferredName: "Jordan",
     sourcePlatform: "Manual",
     collectionMethod: "manual",
-    publicInformationConfirmed: true,
+    permissionConfirmed: true,
     status: "event_attended",
     rushScore: 88,
     interests: ["basketball"],
@@ -44,9 +44,9 @@ const prospects: Prospect[] = [
     id: "prospect-3",
     firstName: "Avery",
     preferredName: "Avery",
-    sourcePlatform: "Public web",
+    sourcePlatform: "Manual note",
     collectionMethod: "assisted",
-    publicInformationConfirmed: true,
+    permissionConfirmed: true,
     status: "not_applicable",
     rushScore: 82,
     interests: ["orientation"],
@@ -54,7 +54,7 @@ const prospects: Prospect[] = [
     followUpDate: null,
     connectedMembers: [],
     eventAttendanceCount: 0,
-    sourceType: "public_source",
+    sourceType: "manual_entry",
   },
 ];
 
@@ -83,8 +83,7 @@ describe("getDashboardMetrics", () => {
       opt_in: 0,
       event_check_in: 1,
       csv_import: 0,
-      manual_entry: 0,
-      public_source: 1,
+      manual_entry: 1,
     });
   });
 });

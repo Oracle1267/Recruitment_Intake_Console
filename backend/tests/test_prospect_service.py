@@ -36,11 +36,11 @@ def prospect_payload(**overrides):
         "hometown": "Topeka, KS",
         "high_school": "Washburn Rural",
         "major": "Business",
-        "source_platform": "Instagram",
+        "source_platform": "Member referral",
         "primary_handle": "@masonrivera",
-        "source_url": "https://instagram.com/masonrivera",
+        "source_url": None,
         "collection_method": CollectionMethod.manual,
-        "public_information_confirmed": True,
+        "permission_confirmed": True,
         "interests": ["orientation", "basketball"],
         "notes": "Met during move-in volunteering.",
     }
@@ -48,24 +48,24 @@ def prospect_payload(**overrides):
     return ProspectCreate(**values)
 
 
-def test_create_manual_public_prospect_records_source_provenance(session):
+def test_create_manual_prospect_records_source_provenance(session):
     prospect = create_prospect(session, prospect_payload())
 
     assert prospect.id
     assert prospect.first_name == "Mason"
     assert prospect.status == RecruitmentStatus.identified
-    assert prospect.source_platform == "Instagram"
-    assert prospect.source_url == "https://instagram.com/masonrivera"
+    assert prospect.source_platform == "Member referral"
+    assert prospect.source_url is None
     assert prospect.collection_method == CollectionMethod.manual
-    assert prospect.public_information_confirmed is True
+    assert prospect.permission_confirmed is True
 
     assert [item.id for item in list_prospects(session)] == [prospect.id]
 
 
-def test_create_prospect_rejects_non_public_collection(session):
-    payload = prospect_payload(public_information_confirmed=False)
+def test_create_prospect_rejects_unpermitted_collection(session):
+    payload = prospect_payload(permission_confirmed=False)
 
-    with pytest.raises(ValueError, match="public information"):
+    with pytest.raises(ValueError, match="permitted"):
         create_prospect(session, payload)
 
 
@@ -104,7 +104,7 @@ def test_suppression_blocks_duplicate_active_lead_by_platform_and_handle(session
     suppression = suppress_identity(
         session,
         SuppressionCreate(
-            platform="Instagram",
+            platform="Member referral",
             handle="@masonrivera",
             reason="Asked not to be contacted.",
         ),
@@ -114,4 +114,3 @@ def test_suppression_blocks_duplicate_active_lead_by_platform_and_handle(session
 
     with pytest.raises(ValueError, match="suppression list"):
         create_prospect(session, prospect_payload())
-

@@ -34,13 +34,13 @@ def prospect_payload(**overrides):
         "hometown": "Wichita, KS",
         "high_school": "East High",
         "major": "Nursing",
-        "source_platform": "TikTok",
+        "source_platform": "Member referral",
         "primary_handle": "@averycole",
-        "source_url": "https://www.tiktok.com/@averycole",
+        "source_url": None,
         "collection_method": "manual",
-        "public_information_confirmed": True,
+        "permission_confirmed": True,
         "interests": ["orientation", "volleyball"],
-        "notes": "Public orientation post.",
+        "notes": "Chapter member referral note.",
     }
     values.update(overrides)
     return values
@@ -62,21 +62,21 @@ def test_create_and_list_prospects():
     listed = client.get("/prospects")
 
     assert created.status_code == 201
-    assert created.json()["source_platform"] == "TikTok"
+    assert created.json()["source_platform"] == "Member referral"
     assert listed.status_code == 200
     assert [item["id"] for item in listed.json()] == [created.json()["id"]]
 
 
-def test_rejects_non_public_prospect_payload():
+def test_rejects_unpermitted_prospect_payload():
     client = make_client()
 
     response = client.post(
         "/prospects",
-        json=prospect_payload(public_information_confirmed=False),
+        json=prospect_payload(permission_confirmed=False),
     )
 
     assert response.status_code == 400
-    assert "public information" in response.json()["detail"]
+    assert "permitted" in response.json()["detail"]
 
 
 def test_updates_status_and_adds_activity():
@@ -114,7 +114,7 @@ def test_suppression_blocks_matching_new_prospect():
     suppression = client.post(
         "/suppressions",
         json={
-            "platform": "TikTok",
+            "platform": "Member referral",
             "handle": "@averycole",
             "reason": "Asked not to be contacted.",
         },
@@ -124,4 +124,3 @@ def test_suppression_blocks_matching_new_prospect():
     assert suppression.status_code == 201
     assert blocked.status_code == 400
     assert "suppression list" in blocked.json()["detail"]
-

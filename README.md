@@ -70,4 +70,4 @@ Keep `.venv`, `node_modules`, local databases, generated caches, and local logs 
 
 ## MVP Boundaries
 
-The current app slice supports recruitment intake, CSV import, duplicate review, prospect promotion, follow-up tracking, and removal/N/A review. Public-source discovery, OSINT collection, web scraping, browser-extension extraction, search-result imports, source-atlas tooling, mass messaging, hidden/private content collection, deleted-content recovery, and deceptive accounts are out of scope.
+The current app slice supports recruitment intake, CSV import, duplicate review, prospect promotion, follow-up tracking, and removal or N/A review. 

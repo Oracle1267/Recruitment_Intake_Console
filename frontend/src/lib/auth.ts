@@ -1,15 +1,21 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 
-export const SESSION_COOKIE_NAME = "rushintel_session";
+export const SESSION_COOKIE_NAME = "rush_tracker_session";
 
-const SESSION_PURPOSE = "rushintel-app-session-v1";
+const SESSION_PURPOSE = "rush-tracker-app-session-v1";
 
 function configuredPassword() {
-  return process.env.RUSHINTEL_APP_PASSWORD?.trim() ?? "";
+  return (
+    process.env.RUSH_TRACKER_APP_PASSWORD
+    || ""
+  ).trim();
 }
 
 function sessionSecret() {
-  return process.env.RUSHINTEL_SESSION_SECRET?.trim() || configuredPassword();
+  return (
+    process.env.RUSH_TRACKER_SESSION_SECRET
+    || configuredPassword()
+  ).trim();
 }
 
 function safeCompare(left: string, right: string) {

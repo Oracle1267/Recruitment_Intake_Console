@@ -200,7 +200,7 @@ export function IntakeConsole({
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-emerald">
               Kappa Sigma
             </p>
-            <h2 className="text-xl font-semibold">Recruitment Intake Console</h2>
+            <h2 className="text-xl font-semibold">Rush Tracker</h2>
           </div>
         </div>
         <div className="grid gap-2 text-sm sm:grid-cols-4 lg:w-[620px]">

@@ -21,5 +21,4 @@ Start-Process powershell -ArgumentList @(
     "-ApiBaseUrl", "http://127.0.0.1:$BackendPort"
 ) -WorkingDirectory $Root
 
-Write-Host "Started RushIntel backend on $BackendPort and frontend on $FrontendPort."
-
+Write-Host "Started Rush Tracker backend on $BackendPort and frontend on $FrontendPort."

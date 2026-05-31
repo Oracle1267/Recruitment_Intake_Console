@@ -53,7 +53,7 @@ def not_found(error: LookupError) -> HTTPException:
 
 @router.get("/health")
 def health_check() -> dict[str, str]:
-    return {"status": "ok", "service": "rushintel-api"}
+    return {"status": "ok", "service": "rush-tracker-api"}
 
 
 @router.post(

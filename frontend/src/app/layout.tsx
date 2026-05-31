@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Recruitment Intake Console",
+  title: "Rush Tracker",
   description: "Kappa Sigma recruitment intake and prospect operations",
 };
 

@@ -1,7 +1,8 @@
 services:
   - type: web
-    name: rushintel-api
+    name: rush-tracker-api
     runtime: python
+    plan: free
     rootDir: backend
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
@@ -9,36 +10,38 @@ services:
     envVars:
       - key: DATABASE_URL
         fromDatabase:
-          name: rushintel-db
+          name: rush-tracker-db
           property: connectionString
-      - key: RUSHINTEL_API_KEY
+      - key: RUSH_TRACKER_API_KEY
         generateValue: true
       - key: CORS_ORIGINS
         value: https://recruitment.threadandsignal.org
 
   - type: web
-    name: rushintel-web
+    name: rush-tracker-web
     runtime: node
+    plan: free
     rootDir: frontend
     buildCommand: npm ci && npm run build
     startCommand: npm run start -- --hostname 0.0.0.0 --port $PORT
     envVars:
-      - key: RUSHINTEL_API_BASE_URL
+      - key: RUSH_TRACKER_API_BASE_URL
         fromService:
           type: web
-          name: rushintel-api
+          name: rush-tracker-api
           property: hostport
-      - key: RUSHINTEL_API_KEY
+      - key: RUSH_TRACKER_API_KEY
         fromService:
           type: web
-          name: rushintel-api
-          envVarKey: RUSHINTEL_API_KEY
-      - key: RUSHINTEL_APP_PASSWORD
+          name: rush-tracker-api
+          envVarKey: RUSH_TRACKER_API_KEY
+      - key: RUSH_TRACKER_APP_PASSWORD
         sync: false
-      - key: RUSHINTEL_SESSION_SECRET
+      - key: RUSH_TRACKER_SESSION_SECRET
         generateValue: true
 
 databases:
-  - name: rushintel-db
-    databaseName: rushintel
-    user: rushintel
+  - name: rush-tracker-db
+    plan: basic-256mb
+    databaseName: rushtracker
+    user: rushtracker

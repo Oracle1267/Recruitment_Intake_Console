@@ -1,6 +1,6 @@
-# Recruitment Intake Console
+# Rush Tracker
 
-Recruitment Intake Console is a Kappa Sigma-branded recruitment operations tool for chapter-controlled intake, review, dedupe, promotion, and follow-up across legitimate recruitment funnels.
+Rush Tracker is a Kappa Sigma-branded recruitment operations tool for chapter-controlled intake, review, dedupe, promotion, and follow-up across legitimate recruitment funnels.
 
 This repository contains a split-stack MVP application for fraternity recruitment intake and prospect operations.
 
@@ -12,7 +12,7 @@ The intended pilot URL is:
 
 For nontechnical chapter users, the handoff should be the hosted URL and shared chapter password, not this GitHub repository.
 
-Deployment instructions live in [DEPLOYMENT.md](DEPLOYMENT.md).
+Deployment instructions live in [DEPLOYMENT.md](DEPLOYMENT.md). The Render Blueprint is configured for a low-cost pilot: free web services plus a small paid Postgres database.
 
 ## App Development
 

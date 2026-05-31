@@ -30,13 +30,13 @@ def get_cors_origins() -> list[str]:
 
 
 def get_api_key() -> str | None:
-    api_key = os.getenv("RUSHINTEL_API_KEY")
+    api_key = os.getenv("RUSH_TRACKER_API_KEY")
     return api_key.strip() if api_key and api_key.strip() else None
 
 
 def create_app() -> FastAPI:
     app = FastAPI(
-        title="RushIntel API",
+        title="Rush Tracker API",
         version="0.1.0",
         description="Ethical recruitment CRM API for manual prospect tracking.",
     )
@@ -58,7 +58,10 @@ def create_app() -> FastAPI:
         ):
             return await call_next(request)
 
-        provided_api_key = request.headers.get("x-rushintel-api-key", "")
+        provided_api_key = (
+            request.headers.get("x-rush-tracker-api-key")
+            or ""
+        )
         if not secrets.compare_digest(provided_api_key, expected_api_key):
             return JSONResponse(
                 status_code=401,

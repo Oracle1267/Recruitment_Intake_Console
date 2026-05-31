@@ -1,8 +1,8 @@
-# Web Deployment Readiness Implementation Plan
+# Rush Tracker Web Deployment Readiness Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Make the Recruitment Intake Console deployable as a browser-based app at `recruitment.threadandsignal.org`.
+**Goal:** Make Rush Tracker deployable as a browser-based app at `recruitment.threadandsignal.org`.
 
 **Architecture:** Render hosts a Python FastAPI backend, a Next.js frontend, and Postgres. The frontend owns the public URL and login session, then proxies browser API calls to the backend with a server-side API key. The backend also accepts direct server-side reads from the frontend using the same API key.
 
@@ -20,7 +20,7 @@
 
 - [ ] Add Postgres driver support with `psycopg[binary]`.
 - [ ] Normalize Render-style Postgres URLs so SQLAlchemy uses the psycopg driver.
-- [ ] Add `RUSHINTEL_API_KEY` middleware that protects all API routes except `/health`.
+- [ ] Add `RUSH_TRACKER_API_KEY` middleware that protects all API routes except `/health`.
 - [ ] Add `CORS_ORIGINS` parsing for production frontend domains.
 - [ ] Add backend tests proving the API key gate blocks unauthenticated requests and permits valid keyed requests.
 
@@ -36,11 +36,11 @@
 - Modify: `frontend/src/lib/intake.ts`
 - Modify: `frontend/src/lib/prospects.ts`
 
-- [ ] Add a shared-password login using `RUSHINTEL_APP_PASSWORD`.
+- [ ] Add a shared-password login using `RUSH_TRACKER_APP_PASSWORD`.
 - [ ] Store a signed, HTTP-only session cookie.
 - [ ] Require the session on the main dashboard and backend proxy route when auth is enabled.
-- [ ] Proxy browser API traffic through Next.js so `RUSHINTEL_API_KEY` stays server-side.
-- [ ] Let server-side dashboard reads call the backend with `RUSHINTEL_API_BASE_URL` and `RUSHINTEL_API_KEY`.
+- [ ] Proxy browser API traffic through Next.js so `RUSH_TRACKER_API_KEY` stays server-side.
+- [ ] Let server-side dashboard reads call the backend with `RUSH_TRACKER_API_BASE_URL` and `RUSH_TRACKER_API_KEY`.
 
 ### Task 3: Render And Domain Handoff
 
@@ -49,7 +49,7 @@
 - Create: `DEPLOYMENT.md`
 - Modify: `README.md`
 
-- [ ] Add a Render Blueprint for `rushintel-api`, `rushintel-web`, and `rushintel-db`.
+- [ ] Add a Render Blueprint for `rush-tracker-api`, `rush-tracker-web`, and `rush-tracker-db`.
 - [ ] Document Render environment variables, login password setup, custom domain setup, and Namecheap CNAME values.
 - [ ] Update README so nontechnical contacts start with the hosted URL instead of local Python/Node commands.
 

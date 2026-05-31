@@ -58,8 +58,8 @@ function normalizeApiBaseUrl(value: string | undefined) {
 }
 
 function serverApiHeaders(): HeadersInit | undefined {
-  const apiKey = process.env.RUSHINTEL_API_KEY;
-  return apiKey ? { "X-RushIntel-Api-Key": apiKey } : undefined;
+  const apiKey = process.env.RUSH_TRACKER_API_KEY;
+  return apiKey ? { "X-Rush-Tracker-Api-Key": apiKey } : undefined;
 }
 
 export default async function DashboardPage() {
@@ -69,7 +69,8 @@ export default async function DashboardPage() {
   }
 
   const serverApiBaseUrl = normalizeApiBaseUrl(
-    process.env.RUSHINTEL_API_BASE_URL || process.env.NEXT_PUBLIC_API_BASE_URL,
+    process.env.RUSH_TRACKER_API_BASE_URL
+      || process.env.NEXT_PUBLIC_API_BASE_URL,
   );
   const browserApiBaseUrl = normalizeApiBaseUrl(
     process.env.NEXT_PUBLIC_API_BASE_URL || (serverApiBaseUrl ? "/api/backend" : undefined),
@@ -92,10 +93,10 @@ export default async function DashboardPage() {
         <header className="flex flex-col gap-3 border-b border-ink/10 pb-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-moss">
-              RushIntel
+              Rush Tracker
             </p>
             <h1 className="mt-1 text-3xl font-semibold tracking-normal text-ink">
-              Kappa Sigma Recruitment
+              Kappa Sigma Rush Tracker
             </h1>
           </div>
           <div className="flex flex-wrap gap-2 text-sm">

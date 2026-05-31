@@ -28,7 +28,7 @@ export default async function LoginPage({ searchParams }: Props) {
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-emerald">
               Kappa Sigma
             </p>
-            <h1 className="text-xl font-semibold">Recruitment Intake Console</h1>
+            <h1 className="text-xl font-semibold">Rush Tracker</h1>
           </div>
         </div>
 
@@ -55,7 +55,7 @@ export default async function LoginPage({ searchParams }: Props) {
           ) : null}
           {!authIsEnabled() ? (
             <p className="rounded-md border border-brass/25 bg-brass/10 px-3 py-2 text-sm text-ink/70">
-              Login is disabled until `RUSHINTEL_APP_PASSWORD` is set.
+              Login is disabled until `RUSH_TRACKER_APP_PASSWORD` is set.
             </p>
           ) : null}
           <button

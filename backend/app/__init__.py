@@ -1,2 +1,1 @@
-"""RushIntel backend application package."""
-
+"""Rush Tracker backend application package."""

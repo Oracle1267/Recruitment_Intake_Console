@@ -10,7 +10,10 @@ type RouteContext = {
 };
 
 function backendBaseUrl() {
-  const configured = process.env.RUSHINTEL_API_BASE_URL || process.env.NEXT_PUBLIC_API_BASE_URL;
+  const configured = (
+    process.env.RUSH_TRACKER_API_BASE_URL
+    || process.env.NEXT_PUBLIC_API_BASE_URL
+  );
   if (!configured) {
     return null;
   }
@@ -43,9 +46,9 @@ async function proxy(request: NextRequest, context: RouteContext) {
   if (contentType) {
     headers.set("content-type", contentType);
   }
-  const apiKey = process.env.RUSHINTEL_API_KEY;
+  const apiKey = process.env.RUSH_TRACKER_API_KEY;
   if (apiKey) {
-    headers.set("x-rushintel-api-key", apiKey);
+    headers.set("x-rush-tracker-api-key", apiKey);
   }
 
   const body = request.method === "GET" || request.method === "HEAD"

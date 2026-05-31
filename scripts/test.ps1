@@ -37,4 +37,4 @@ finally {
     Pop-Location
 }
 
-Write-Host "RushIntel verification complete."
+Write-Host "Rush Tracker verification complete."

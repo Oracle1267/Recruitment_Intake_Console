@@ -52,18 +52,18 @@ def test_health_check():
     response = client.get("/health")
 
     assert response.status_code == 200
-    assert response.json() == {"status": "ok", "service": "rushintel-api"}
+    assert response.json() == {"status": "ok", "service": "rush-tracker-api"}
 
 
 def test_api_key_protects_api_when_configured(monkeypatch):
-    monkeypatch.setenv("RUSHINTEL_API_KEY", "chapter-secret")
+    monkeypatch.setenv("RUSH_TRACKER_API_KEY", "chapter-secret")
     client = make_client()
 
     blocked = client.get("/prospects")
     health = client.get("/health")
     allowed = client.get(
         "/prospects",
-        headers={"X-RushIntel-Api-Key": "chapter-secret"},
+        headers={"X-Rush-Tracker-Api-Key": "chapter-secret"},
     )
 
     assert blocked.status_code == 401

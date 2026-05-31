@@ -55,6 +55,23 @@ def test_health_check():
     assert response.json() == {"status": "ok", "service": "rushintel-api"}
 
 
+def test_api_key_protects_api_when_configured(monkeypatch):
+    monkeypatch.setenv("RUSHINTEL_API_KEY", "chapter-secret")
+    client = make_client()
+
+    blocked = client.get("/prospects")
+    health = client.get("/health")
+    allowed = client.get(
+        "/prospects",
+        headers={"X-RushIntel-Api-Key": "chapter-secret"},
+    )
+
+    assert blocked.status_code == 401
+    assert blocked.json()["detail"] == "Invalid API key."
+    assert health.status_code == 200
+    assert allowed.status_code == 200
+
+
 def test_create_and_list_prospects():
     client = make_client()
 

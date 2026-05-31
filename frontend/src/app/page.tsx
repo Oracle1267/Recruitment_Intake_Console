@@ -8,6 +8,8 @@ import {
   UserPlus,
   Users,
 } from "lucide-react";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 import {
   fetchProspects,
@@ -19,6 +21,7 @@ import {
 import { IntakeConsole } from "@/components/intake-console";
 import { fetchIntakeSnapshot } from "@/lib/intake";
 import { RemoveProspectButton } from "@/components/remove-prospect-button";
+import { authIsEnabled, SESSION_COOKIE_NAME, sessionIsValid } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -44,10 +47,35 @@ function formatSourceLabel(source: string) {
   return source.replaceAll("_", " ");
 }
 
+function normalizeApiBaseUrl(value: string | undefined) {
+  if (!value) {
+    return undefined;
+  }
+  if (value.startsWith("http://") || value.startsWith("https://") || value.startsWith("/")) {
+    return value.replace(/\/$/, "");
+  }
+  return `http://${value.replace(/\/$/, "")}`;
+}
+
+function serverApiHeaders(): HeadersInit | undefined {
+  const apiKey = process.env.RUSHINTEL_API_KEY;
+  return apiKey ? { "X-RushIntel-Api-Key": apiKey } : undefined;
+}
+
 export default async function DashboardPage() {
-  const prospects = await fetchProspects();
-  const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-  const intake = await fetchIntakeSnapshot(apiBaseUrl);
+  const cookieStore = await cookies();
+  if (authIsEnabled() && !sessionIsValid(cookieStore.get(SESSION_COOKIE_NAME)?.value)) {
+    redirect("/login");
+  }
+
+  const serverApiBaseUrl = normalizeApiBaseUrl(
+    process.env.RUSHINTEL_API_BASE_URL || process.env.NEXT_PUBLIC_API_BASE_URL,
+  );
+  const browserApiBaseUrl = normalizeApiBaseUrl(
+    process.env.NEXT_PUBLIC_API_BASE_URL || (serverApiBaseUrl ? "/api/backend" : undefined),
+  );
+  const prospects = await fetchProspects(serverApiBaseUrl, serverApiHeaders());
+  const intake = await fetchIntakeSnapshot(serverApiBaseUrl, serverApiHeaders());
   const metrics = getDashboardMetrics(prospects);
   const grouped = groupProspectsByStatus(prospects);
   const dueSoon = prospects
@@ -79,6 +107,13 @@ export default async function DashboardPage() {
               <Database className="h-4 w-4" />
               Chapter handoff ready
             </span>
+            {authIsEnabled() ? (
+              <form action="/api/logout" method="post">
+                <button className="rounded-md border border-ink/15 bg-white px-3 py-2 font-medium text-ink/65 shadow-panel">
+                  Sign out
+                </button>
+              </form>
+            ) : null}
           </div>
         </header>
 
@@ -106,7 +141,7 @@ export default async function DashboardPage() {
         </section>
 
         <IntakeConsole
-          apiBaseUrl={apiBaseUrl}
+          apiBaseUrl={browserApiBaseUrl}
           initialLeads={intake.leads}
           initialDuplicateGroups={intake.duplicateGroups}
           initialMetrics={intake.metrics}
@@ -137,7 +172,7 @@ export default async function DashboardPage() {
                       <ProspectMiniCard
                         key={prospect.id}
                         prospect={prospect}
-                        apiBaseUrl={apiBaseUrl}
+                        apiBaseUrl={browserApiBaseUrl}
                       />
                     ))}
                   </div>

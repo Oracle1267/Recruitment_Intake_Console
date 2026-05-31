@@ -206,7 +206,10 @@ export function formatIntakeSource(sourceType: IntakeSourceType) {
   return intakeSourceOptions.find((option) => option.id === sourceType)?.label ?? sourceType;
 }
 
-export async function fetchIntakeSnapshot(apiBaseUrl?: string): Promise<{
+export async function fetchIntakeSnapshot(
+  apiBaseUrl?: string,
+  headers?: HeadersInit,
+): Promise<{
   leads: IntakeLead[];
   duplicateGroups: IntakeDuplicateGroup[];
   metrics: IntakeMetrics;
@@ -221,9 +224,9 @@ export async function fetchIntakeSnapshot(apiBaseUrl?: string): Promise<{
 
   try {
     const [leadsResponse, duplicatesResponse, metricsResponse] = await Promise.all([
-      fetch(`${apiBaseUrl}/intake-leads`, { cache: "no-store" }),
-      fetch(`${apiBaseUrl}/intake-duplicates`, { cache: "no-store" }),
-      fetch(`${apiBaseUrl}/intake-metrics`, { cache: "no-store" }),
+      fetch(`${apiBaseUrl}/intake-leads`, { cache: "no-store", headers }),
+      fetch(`${apiBaseUrl}/intake-duplicates`, { cache: "no-store", headers }),
+      fetch(`${apiBaseUrl}/intake-metrics`, { cache: "no-store", headers }),
     ]);
     if (!leadsResponse.ok || !duplicatesResponse.ok || !metricsResponse.ok) {
       return {

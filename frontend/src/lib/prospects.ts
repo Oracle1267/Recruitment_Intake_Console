@@ -180,8 +180,11 @@ export function mapApiProspect(prospect: ApiProspect): Prospect {
   };
 }
 
-export async function fetchProspects(): Promise<Prospect[]> {
-  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+export async function fetchProspects(
+  apiBaseUrl?: string,
+  headers?: HeadersInit,
+): Promise<Prospect[]> {
+  const baseUrl = apiBaseUrl ?? process.env.NEXT_PUBLIC_API_BASE_URL;
   if (!baseUrl) {
     return demoProspects;
   }
@@ -189,6 +192,7 @@ export async function fetchProspects(): Promise<Prospect[]> {
   try {
     const response = await fetch(`${baseUrl}/prospects`, {
       cache: "no-store",
+      headers,
     });
     if (!response.ok) {
       return demoProspects;

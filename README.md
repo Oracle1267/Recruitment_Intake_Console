@@ -4,6 +4,16 @@ Recruitment Intake Console is a Kappa Sigma-branded recruitment operations tool 
 
 This repository contains a split-stack MVP application for fraternity recruitment intake and prospect operations.
 
+## Hosted Use
+
+The intended pilot URL is:
+
+- https://recruitment.threadandsignal.org
+
+For nontechnical chapter users, the handoff should be the hosted URL and shared chapter password, not this GitHub repository.
+
+Deployment instructions live in [DEPLOYMENT.md](DEPLOYMENT.md).
+
 ## App Development
 
 Recommended setup:
@@ -70,4 +80,4 @@ Keep `.venv`, `node_modules`, local databases, generated caches, and local logs 
 
 ## MVP Boundaries
 
-The current app slice supports recruitment intake, CSV import, duplicate review, prospect promotion, follow-up tracking, and removal or N/A review. 
+The current app slice supports recruitment intake, CSV import, duplicate review, prospect promotion, follow-up tracking, and removal or N/A review. Public-source discovery, OSINT collection, web scraping, browser-extension extraction, search-result imports, source-atlas tooling, mass messaging, hidden/private content collection, deleted-content recovery, and deceptive accounts are out of scope.

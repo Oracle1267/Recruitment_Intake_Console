@@ -12,7 +12,7 @@ The intended pilot URL is:
 
 For nontechnical chapter users, the handoff should be the hosted URL and shared chapter password, not this GitHub repository.
 
-Deployment instructions live in [DEPLOYMENT.md](DEPLOYMENT.md). The Render Blueprint is configured for a low-cost pilot: free web services plus a small paid Postgres database.
+Deployment instructions live in [DEPLOYMENT.md](DEPLOYMENT.md). The recommended pilot uses Vercel plus Neon free tiers so the chapter can test the tool without adding another monthly hosting bill.
 
 ## App Development
 
@@ -53,7 +53,7 @@ npm run build
 npm run dev
 ```
 
-Set `NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8001` before starting the frontend when you want it to read live backend data. Without that variable, the dashboard stays blank instead of showing sample prospects.
+Set `NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8001` before starting the frontend when you want it to read live local FastAPI data. For hosted Vercel use, leave that variable unset and set `DATABASE_URL` instead.
 
 ## Intake Workflow
 

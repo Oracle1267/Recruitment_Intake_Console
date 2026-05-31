@@ -15,13 +15,26 @@ import {
   fetchProspects,
   getDashboardMetrics,
   groupProspectsByStatus,
+  mapApiProspect,
   pipelineStatuses,
   type Prospect,
 } from "@/lib/prospects";
 import { IntakeConsole } from "@/components/intake-console";
-import { fetchIntakeSnapshot } from "@/lib/intake";
+import {
+  fetchIntakeSnapshot,
+  mapApiIntakeDuplicateGroup,
+  mapApiIntakeLead,
+  mapApiIntakeMetrics,
+} from "@/lib/intake";
 import { RemoveProspectButton } from "@/components/remove-prospect-button";
 import { authIsEnabled, SESSION_COOKIE_NAME, sessionIsValid } from "@/lib/auth";
+import {
+  databaseIsConfigured,
+  getIntakeMetrics,
+  listIntakeDuplicateGroups,
+  listIntakeLeads,
+  listProspects,
+} from "@/lib/server-store";
 
 export const dynamic = "force-dynamic";
 
@@ -62,6 +75,24 @@ function serverApiHeaders(): HeadersInit | undefined {
   return apiKey ? { "X-Rush-Tracker-Api-Key": apiKey } : undefined;
 }
 
+async function fetchHostedSnapshot() {
+  const [apiProspects, apiLeads, apiDuplicateGroups, apiMetrics] = await Promise.all([
+    listProspects(),
+    listIntakeLeads(),
+    listIntakeDuplicateGroups(),
+    getIntakeMetrics(),
+  ]);
+
+  return {
+    prospects: apiProspects.map(mapApiProspect),
+    intake: {
+      leads: apiLeads.map(mapApiIntakeLead),
+      duplicateGroups: apiDuplicateGroups.map(mapApiIntakeDuplicateGroup),
+      metrics: mapApiIntakeMetrics(apiMetrics),
+    },
+  };
+}
+
 export default async function DashboardPage() {
   const cookieStore = await cookies();
   if (authIsEnabled() && !sessionIsValid(cookieStore.get(SESSION_COOKIE_NAME)?.value)) {
@@ -72,11 +103,17 @@ export default async function DashboardPage() {
     process.env.RUSH_TRACKER_API_BASE_URL
       || process.env.NEXT_PUBLIC_API_BASE_URL,
   );
+  const useHostedStore = !serverApiBaseUrl && databaseIsConfigured();
   const browserApiBaseUrl = normalizeApiBaseUrl(
-    process.env.NEXT_PUBLIC_API_BASE_URL || (serverApiBaseUrl ? "/api/backend" : undefined),
+    process.env.NEXT_PUBLIC_API_BASE_URL
+      || (serverApiBaseUrl || useHostedStore ? "/api/backend" : undefined),
   );
-  const prospects = await fetchProspects(serverApiBaseUrl, serverApiHeaders());
-  const intake = await fetchIntakeSnapshot(serverApiBaseUrl, serverApiHeaders());
+  const { prospects, intake } = useHostedStore
+    ? await fetchHostedSnapshot()
+    : {
+        prospects: await fetchProspects(serverApiBaseUrl, serverApiHeaders()),
+        intake: await fetchIntakeSnapshot(serverApiBaseUrl, serverApiHeaders()),
+      };
   const metrics = getDashboardMetrics(prospects);
   const grouped = groupProspectsByStatus(prospects);
   const dueSoon = prospects

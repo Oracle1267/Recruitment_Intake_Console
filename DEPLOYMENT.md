@@ -4,44 +4,69 @@ This guide gets Rush Tracker online at:
 
 `https://recruitment.threadandsignal.org`
 
-The app is now designed for a hosted pilot:
+The recommended pilot setup uses no new paid hosting subscription:
 
-- The public browser app is the Next.js frontend.
-- The FastAPI backend is protected by `RUSH_TRACKER_API_KEY`.
-- The frontend proxies browser API calls so the backend key stays server-side.
-- The database should be Render Postgres, not local SQLite.
+- Vercel hosts the Next.js web app on the Hobby plan.
+- Neon hosts the Postgres database on the Free plan.
 - The app login uses one shared chapter password stored in `RUSH_TRACKER_APP_PASSWORD`.
-- The pilot Blueprint uses free Render web services and the smallest paid Render Postgres tier, so the expected baseline is the database tier cost instead of two paid app servers plus database.
-- Free web services can take a little longer to wake up after inactivity. Upgrade `rush-tracker-web` and `rush-tracker-api` from `free` to `starter` later only if that delay becomes annoying.
+- Browser API calls stay inside the Next app at `/api/backend`.
+- The FastAPI backend remains available for local development, but it is not required for the hosted pilot.
 
-## 1. Create The Render Blueprint
+As of May 31, 2026, Vercel lists Hobby as free for personal projects and Neon lists a $0 Free plan. Re-check the official Vercel and Neon pricing pages before a national or multi-chapter rollout.
 
-1. Log in to Render.
-2. Create a new Blueprint from the GitHub repo:
+## 1. Create The Neon Database
+
+1. Go to Neon and create a new project.
+2. Use the Free plan.
+3. Create the default Postgres database.
+4. Copy the pooled connection string. It will look like:
+   `postgresql://...neon.tech/...`
+5. Keep that connection string private. It becomes `DATABASE_URL` in Vercel.
+
+Do not put real chapter data into the app until the Vercel deploy can create, refresh, and remove a fake lead successfully.
+
+## 2. Create The Vercel Project
+
+1. Log in to Vercel.
+2. Import the GitHub repo:
    `https://github.com/Oracle1267/Recruitment_Intake_Console`
-3. Render should detect `render.yaml`.
-4. During setup, Render will ask for `RUSH_TRACKER_APP_PASSWORD`.
-5. Set that to the temporary shared chapter password.
-6. Let Render create:
-   - `rush-tracker-web`
-   - `rush-tracker-api`
-   - `rush-tracker-db`
+3. Set **Root Directory** to:
+   `frontend`
+4. Leave the framework as **Next.js**.
+5. Add these environment variables:
 
-Do not put real chapter data into the app until the web service, API service, and database all deploy successfully.
+| Name | Value |
+| --- | --- |
+| `DATABASE_URL` | Neon pooled Postgres connection string |
+| `RUSH_TRACKER_APP_PASSWORD` | temporary shared chapter password |
+| `RUSH_TRACKER_SESSION_SECRET` | long random secret value |
 
-## 2. Add The Custom Domain In Render
+Do not set `NEXT_PUBLIC_API_BASE_URL` or `RUSH_TRACKER_API_BASE_URL` for the hosted Vercel pilot. If either one is set, the app assumes there is an external backend.
 
-1. Open the `rush-tracker-web` service in Render.
+## 3. Deploy And Smoke Test
+
+1. Deploy the Vercel project.
+2. Open the generated `*.vercel.app` URL.
+3. Log in with the shared password.
+4. Add one fake intake lead.
+5. Refresh the page.
+6. Confirm the fake lead persists.
+7. Mark the fake lead Removed / N/A.
+
+If the lead persists after refresh, the app is using Neon correctly.
+
+## 4. Add The Custom Domain In Vercel
+
+1. Open the Vercel project.
 2. Go to **Settings**.
-3. Find **Custom Domains**.
+3. Open **Domains**.
 4. Add:
    `recruitment.threadandsignal.org`
-5. Render will show a DNS target. It will look similar to:
-   `rush-tracker-web.onrender.com`
+5. Vercel will show the DNS record it expects.
 
-Keep that Render target open. You will paste it into Namecheap.
+For a subdomain, Vercel commonly asks for a CNAME target such as `cname.vercel-dns.com`, but use the exact value Vercel shows.
 
-## 3. Add The Namecheap DNS Record
+## 5. Add The Namecheap DNS Record
 
 In Namecheap:
 
@@ -49,62 +74,51 @@ In Namecheap:
 2. Click **Manage** for `threadandsignal.org`.
 3. Open **Advanced DNS**.
 4. Under **Host Records**, click **Add New Record**.
-5. Add this record:
+5. Add the record Vercel requested.
+
+For the likely CNAME case:
 
 | Field | Value |
 | --- | --- |
 | Type | `CNAME Record` |
 | Host | `recruitment` |
-| Value | the Render target for `rush-tracker-web`, for example `rush-tracker-web.onrender.com` |
+| Value | Vercel's CNAME target, often `cname.vercel-dns.com` |
 | TTL | `Automatic` or `30 min` |
 
 Do not put the full domain in the Host box. Use `recruitment`, not `recruitment.threadandsignal.org`.
 
-Leave the existing email/TXT records alone.
+Leave the existing email and TXT records alone.
 
-## 4. Verify In Render
+## 6. Verify In Vercel
 
-1. Return to Render.
-2. Open `rush-tracker-web` custom domains.
-3. Click **Verify** next to `recruitment.threadandsignal.org`.
+1. Return to the Vercel project.
+2. Open **Settings > Domains**.
+3. Wait for Vercel to verify `recruitment.threadandsignal.org`.
 4. If verification fails, wait 10-30 minutes and try again.
 5. When verified, visit:
    `https://recruitment.threadandsignal.org`
 
-Render automatically provisions HTTPS certificates for custom domains.
+Vercel automatically provisions HTTPS certificates for verified domains.
 
-## 5. First Login
+## 7. Changing The Chapter Password
 
-Use the shared password from `RUSH_TRACKER_APP_PASSWORD`.
-
-After logging in, test:
-
-1. Add one fake intake lead.
-2. Refresh the page.
-3. Confirm the fake lead is still there.
-4. Mark the fake lead Removed / N/A.
-
-If the lead persists after refresh, the app is using the hosted database correctly.
-
-## 6. Changing The Chapter Password
-
-1. Open Render.
-2. Open the `rush-tracker-web` service.
-3. Go to **Environment**.
-4. Change `RUSH_TRACKER_APP_PASSWORD`.
-5. Save changes and redeploy.
+1. Open the Vercel project.
+2. Go to **Settings > Environment Variables**.
+3. Change `RUSH_TRACKER_APP_PASSWORD`.
+4. Redeploy the app.
 
 Changing the password signs everyone out.
 
-## 7. Current Pilot Boundary
+## 8. National Rollout Boundary
 
-This is a pilot intake console, not an official Kappa Sigma national system.
+This is a chapter pilot, not an official Kappa Sigma national system.
 
-Before broad use, add:
+Before broad use, national or an approved technical owner should add:
 
-- Individual user accounts.
+- Individual user accounts and role-based access.
+- Per-chapter data isolation.
 - Audit logs.
-- Export/delete controls.
-- A written privacy and retention policy.
-- A backup policy for the Postgres database.
-- Approval from the appropriate chapter or fraternity authority.
+- Export and delete controls.
+- Written privacy and retention policies.
+- Database backup and incident-response procedures.
+- A paid hosting plan with support and ownership under the fraternity, not a volunteer's personal account.
